@@ -1,5 +1,3 @@
-import uuid
-
 import clickhouse_connect
 from consumer.config import CH_CONFIG
 from consumer.logger import logger
@@ -35,14 +33,16 @@ def get_clickhouse_client():
 
 
 def save_to_clickhouse(client, data):
-    insert_data = [
-        {
-            "id": str(uuid.uuid4()),
-            "link": data["link"],
-            "request": data["method"],
-            "footprint_time": parse_timestamptz(data["footprint_time"]),
-            "execute_time": datetime.utcnow(),  # 기본값 대신 직접 넣기
-        }
-    ]
-    client.insert("prd.user_footprint", insert_data)
+    query = """
+    INSERT INTO prd.user_footprint (link, request, footprint_time)
+    VALUES (%(link)s, %(request)s, %(footprint_time)s)
+    """
+
+    params = {
+        "link": data["link"],
+        "request": data["method"],
+        "footprint_time": parse_timestamptz(data["footprint_time"]),
+    }
+
+    client.execute(query, params)
     logger.info("데이터 ClickHouse 저장 완료")
