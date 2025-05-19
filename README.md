@@ -7,3 +7,9 @@
 ./kafka.sh restart    # 재시작
 ./kafka.sh status     # 상태 확인
 ```
+
+
+```
+pip install confluent-kafka
+pip install python-dotenv
+```

@@ -9,7 +9,7 @@ def main():
     conf = {
         "bootstrap.servers": os.getenv("BOOTSTAP_SERVER"),  # Kafka 브로커 주소
         "group.id": os.getenv("GROUP_ID"),  # Consumer 그룹명
-        "auto.offset.reset": os.getenv("earliest"),  # 처음부터 읽기
+        "auto.offset.reset": os.getenv("OFFSET_RESET_CONFIG"),  # 처음부터 읽기
     }
 
     consumer = Consumer(conf)
