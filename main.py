@@ -57,3 +57,7 @@ def main():
     finally:
         consumer.close()
         logging.info("Consumer closed")
+
+
+if __name__ == "__main__":
+    main()
