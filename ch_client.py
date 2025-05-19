@@ -1,6 +1,6 @@
 import clickhouse_connect
-from consumer.config import CH_CONFIG
-from consumer.logger import logger
+from config import CH_CONFIG
+from logger import logger
 
 
 def get_clickhouse_client():

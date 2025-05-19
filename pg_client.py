@@ -1,6 +1,6 @@
 import psycopg2
-from consumer.config import PG_CONFIG
-from consumer.logger import logger
+from config import PG_CONFIG
+from logger import logger
 
 
 def get_pg_connection():
