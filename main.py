@@ -2,7 +2,6 @@ import os
 import logging
 from dotenv import load_dotenv
 from confluent_kafka import Consumer, KafkaError
-import uuid
 
 load_dotenv()
 
@@ -24,8 +23,8 @@ logging.basicConfig(
 def main():
     conf = {
         "bootstrap.servers": os.getenv("BOOTSTRAP_SERVER"),
-        "group.id": f"consumer-{uuid.uuid4()}",
-        "auto.offset.reset": os.getenv("OFFSET_RESET_CONFIG", "earliest"),
+        "group.id": os.getenv("TOPIC"),
+        "auto.offset.reset": os.getenv("OFFSET_RESET_CONFIG"),
     }
 
     consumer = Consumer(conf)
