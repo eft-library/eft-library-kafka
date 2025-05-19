@@ -40,5 +40,7 @@ def save_to_clickhouse(client, data):
             "footprint_time": parse_timestamptz(data["footprint_time"]),
         }
     ]
-    client.insert("prd.user_footprint", insert_data)
+    client.insert(
+        "prd.user_footprint", insert_data, columns=["link", "request", "footprint_time"]
+    )
     logger.info("데이터 ClickHouse 저장 완료")
