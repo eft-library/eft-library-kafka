@@ -35,11 +35,9 @@ def get_clickhouse_client():
 def save_to_clickhouse(client, data):
     insert_data = [
         {
-            "id": None,  # 서버에서 generateUUIDv4() 자동 생성
             "link": data["link"],
             "request": data["method"],
             "footprint_time": parse_timestamptz(data["footprint_time"]),
-            "execute_time": None,  # now() 자동
         }
     ]
     client.insert("prd.user_footprint", insert_data)

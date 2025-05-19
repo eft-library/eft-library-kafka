@@ -1,9 +1,9 @@
 import json
 from confluent_kafka import Consumer, KafkaError
-from logger import logger
-from config import KAFKA_CONFIG
-from pg_client import get_pg_connection, save_to_postgresql
-from ch_client import get_clickhouse_client, save_to_clickhouse
+from consumer.logger import logger
+from consumer.config import KAFKA_CONFIG
+from consumer.pg_client import get_pg_connection, save_to_postgresql
+from consumer.ch_client import get_clickhouse_client, save_to_clickhouse
 
 
 def main():
