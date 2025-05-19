@@ -17,5 +17,5 @@ def save_to_clickhouse(client, data):
             "execute_time": None,  # now() 자동
         }
     ]
-    client.insert("user_footprint", insert_data)
+    client.insert("prd.user_footprint", insert_data)
     logger.info("데이터 ClickHouse 저장 완료")
