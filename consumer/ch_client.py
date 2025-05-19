@@ -44,5 +44,5 @@ def save_to_clickhouse(client, data):
         "footprint_time": parse_timestamptz(data["footprint_time"]),
     }
 
-    client.execute(query, params)
+    client.command(query, params)
     logger.info("데이터 ClickHouse 저장 완료")
