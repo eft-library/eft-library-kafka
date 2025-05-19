@@ -6,6 +6,11 @@
 ./kafka.sh stop       # 종료
 ./kafka.sh restart    # 재시작
 ./kafka.sh status     # 상태 확인
+
+./consumer.sh start
+./consumer.sh stop
+./consumer.sh restart
+./consumer.sh status
 ```
 
 
@@ -13,4 +18,5 @@
 pip install confluent-kafka
 pip install python-dotenv
 pip install psycopg2-binary
+pip install clickhouse-connect
 ```
