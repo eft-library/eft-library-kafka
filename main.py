@@ -23,7 +23,7 @@ logging.basicConfig(
 def main():
     conf = {
         "bootstrap.servers": os.getenv("BOOTSTRAP_SERVER"),
-        "group.id": os.getenv("TOPIC"),
+        "group.id": os.getenv("GROUP_ID"),
         "auto.offset.reset": os.getenv("OFFSET_RESET_CONFIG"),
     }
 
