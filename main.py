@@ -1,46 +1,58 @@
-from confluent_kafka import Consumer, KafkaError
 import os
+import logging
 from dotenv import load_dotenv
+from confluent_kafka import Consumer, KafkaError
 
 load_dotenv()
+
+# 로그 설정
+LOG_DIR = os.getenv("LOG_DIR", "./logs")  # .env 파일에서 경로 설정 가능, 기본은 ./logs
+LOG_FILE = os.path.join(LOG_DIR, "consumer.log")
+os.makedirs(LOG_DIR, exist_ok=True)  # 디렉토리 없으면 생성
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[
+        logging.FileHandler(LOG_FILE),
+        logging.StreamHandler(),  # 터미널에도 출력 (원하면 제거 가능)
+    ],
+)
 
 
 def main():
     conf = {
-        "bootstrap.servers": os.getenv("BOOTSTAP_SERVER"),  # Kafka 브로커 주소
-        "group.id": os.getenv("GROUP_ID"),  # Consumer 그룹명
-        "auto.offset.reset": os.getenv("OFFSET_RESET_CONFIG"),  # 처음부터 읽기
+        "bootstrap.servers": os.getenv("BOOTSTRAP_SERVER"),
+        "group.id": os.getenv("GROUP_ID"),
+        "auto.offset.reset": os.getenv("OFFSET_RESET_CONFIG", "earliest"),
     }
 
     consumer = Consumer(conf)
-
-    topic = "test-topic"
+    topic = os.getenv("TOPIC", "test-topic")
     consumer.subscribe([topic])
 
-    print(f"Subscribed to topic: {topic}")
+    logging.info(f"Subscribed to topic: {topic}")
 
     try:
         while True:
-            msg = consumer.poll(1.0)  # 1초 대기
+            msg = consumer.poll(1.0)
             if msg is None:
                 continue
             if msg.error():
                 if msg.error().code() == KafkaError._PARTITION_EOF:
-                    # 파티션 끝에 도달한 경우
-                    print(f"End of partition reached {msg.topic()} [{msg.partition()}]")
+                    logging.warning(
+                        f"End of partition: {msg.topic()} [{msg.partition()}]"
+                    )
                 else:
-                    print(f"Error occurred: {msg.error().str()}")
+                    logging.error(f"Error: {msg.error().str()}")
             else:
-                # 메시지 수신
-                print(f"Received message: {msg.value().decode('utf-8')}")
-                # 여기서 ClickHouse/PostgreSQL 저장 로직 추가 가능
+                value = msg.value().decode("utf-8")
+                logging.info(f"Received message: {value}")
+                # → ClickHouse/PostgreSQL 저장 로직 삽입 가능
 
     except KeyboardInterrupt:
-        print("Consumer stopped by user")
+        logging.info("Consumer interrupted by user")
 
     finally:
         consumer.close()
-
-
-if __name__ == "__main__":
-    main()
+        logging.info("Consumer closed")
