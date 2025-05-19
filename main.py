@@ -14,7 +14,7 @@ def main():
 
     consumer = Consumer(conf)
 
-    topic = "test-topics"
+    topic = "test-topic"
     consumer.subscribe([topic])
 
     print(f"Subscribed to topic: {topic}")
