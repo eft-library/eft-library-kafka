@@ -1,6 +1,6 @@
 import clickhouse_connect
-from config import CH_CONFIG
-from logger import logger
+from consumer.config import CH_CONFIG
+from consumer.logger import logger
 from datetime import datetime, timezone, timedelta
 import re
 

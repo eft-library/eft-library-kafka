@@ -1,6 +1,6 @@
 import logging
 import os
-from config import LOG_DIR, LOG_FILE
+from consumer.config import LOG_DIR, LOG_FILE
 
 os.makedirs(LOG_DIR, exist_ok=True)
 
