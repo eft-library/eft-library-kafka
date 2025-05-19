@@ -1,12 +1,14 @@
 #!/bin/bash
 
-APP_DIR="/home/kafka/eft-library-kafka"      # main.py 위치
-VENV_DIR="$APP_DIR/venv"                     # 가상환경 경로
+APP_DIR="/home/kafka/eft-library-kafka"
+VENV_DIR="$APP_DIR/venv"
 APP_NAME="main.py"
 PID_FILE="$APP_DIR/consumer.pid"
 
-# 로그 위치, 원하는 경로로 수정 가능
-LOG_FILE="/home/kafka/eft-library-kafka/logs"
+LOG_DIR="$APP_DIR/logs"
+LOG_FILE="$LOG_DIR/consumer.log"
+
+mkdir -p "$LOG_DIR"
 
 start() {
   if [ -f "$PID_FILE" ] && kill -0 $(cat "$PID_FILE") 2>/dev/null; then
