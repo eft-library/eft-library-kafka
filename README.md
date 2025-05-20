@@ -70,10 +70,6 @@ Kafka를 통해서 페이지 방문 History 관련 대시보드와 통계를 표
 
 | 항목         | 정보                                        |
 |------------|-------------------------------------------|
-| OS         | Ubuntu 22.04.5 LTS                        |
-| SSD        | 500GB                                     |
-| RAM        | 32GB                                      |
-| CPU        | Ryzen 5 3600 (6 Core / 12 Thread)         |
 | Kafka      | kafka_2.13-4.0.0 (KRaft 모드, Zookeeper 제거) |
 | PostgreSQL | PostgreSQL 17.4                           |
 | ClickHouse | 25.4.4.25                                 |
