@@ -25,6 +25,7 @@
 > PostgreSQL과 ClickHouse 두 저장소에 적재하는 이유는 성능 비교를 해보기 위함입니다.
 
 # 구조
+![architecture](https://github.com/user-attachments/assets/11fc955e-0516-4dd7-8863-92f4ebb249af)
 
 # ClickHouse 
 ClickHouse는 Yandex에서 개발한 **오픈소스 컬럼 지향(column-oriented) 데이터베이스 관리 시스템(DBMS)** 입니다.
