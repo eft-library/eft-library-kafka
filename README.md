@@ -1,12 +1,3 @@
-# eft-library-kafka
-
-> 실시간 데이터를 처리하는 부분입니다.
-> 
-> FastAPI의 Middleware를 사용해서 요청이 오는 경우 페이지 주소, 통신 방식, 요청 시간을 Kafka에 넘겨줍니다.
-> 
-> Kafka에서 이를 받아 Postgresql, ClickHouse에 적재를 진행하고, 웹에서 통계를 보여주고 있습니다.
-> 
-> PostgreSQL과 ClickHouse 두 저장소에 적재하는 이유는 성능 비교를 해보기 위함입니다.
 
 - [eft-library-kafka](#eft-library-kafka)
 - [ClickHouse](#clickhouse)
@@ -21,6 +12,16 @@
 - [번외: 서버에 구축하기](#번외-서버에-구축하기)
 - [번외: Kafka 코드](#번외-kafka-코드)
 
+
+# eft-library-kafka
+
+> 실시간 데이터를 처리하는 부분입니다.
+> 
+> FastAPI의 Middleware를 사용해서 요청이 오는 경우 페이지 주소, 통신 방식, 요청 시간을 Kafka에 넘겨줍니다.
+> 
+> Kafka에서 이를 받아 Postgresql, ClickHouse에 적재를 진행하고, 웹에서 통계를 보여주고 있습니다.
+> 
+> PostgreSQL과 ClickHouse 두 저장소에 적재하는 이유는 성능 비교를 해보기 위함입니다.
 
 # ClickHouse 
 ClickHouse는 Yandex에서 개발한 **오픈소스 컬럼 지향(column-oriented) 데이터베이스 관리 시스템(DBMS)** 입니다.
