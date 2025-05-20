@@ -1,5 +1,6 @@
 
 - [eft-library-kafka](#eft-library-kafka)
+- [구조](#구조)
 - [ClickHouse](#clickhouse)
 - [ClickHouse VS PostgreSQL](#clickhouse-vs-postgresql)
 - [개발 서버 사양](#개발-서버-사양)
@@ -22,6 +23,8 @@
 > Kafka에서 이를 받아 Postgresql, ClickHouse에 적재를 진행하고, 웹에서 통계를 보여주고 있습니다.
 > 
 > PostgreSQL과 ClickHouse 두 저장소에 적재하는 이유는 성능 비교를 해보기 위함입니다.
+
+# 구조
 
 # ClickHouse 
 ClickHouse는 Yandex에서 개발한 **오픈소스 컬럼 지향(column-oriented) 데이터베이스 관리 시스템(DBMS)** 입니다.
@@ -124,16 +127,16 @@ COMMENT ON COLUMN USER_FOOTPRINT.EXECUTE_TIME IS '사용자 기록 적재 시간
 PostgreSQL에서 VARCHAR가 아닌 TEXT 타입의 장점
 
     1. 길이 제한의 실효성 부족
-    대부분 VARCHAR(n)의 n은 "어림짐작"으로 정합니다. (예: VARCHAR(255))
-    실질적으로는 대부분의 경우 그 제한이 논리적인 필요가 아닌 습관입니다.
+    대부분 VARCHAR(n)의 n은 "어림짐작"으로 정함. (예: VARCHAR(255))
+    실질적으로는 대부분의 경우 그 제한이 논리적인 필요가 아닌 습관
     → 나중에 값이 초과되면 불필요한 에러 유발
 
     2. 성능은 사실상 동일
     PostgreSQL 내부에서는 TEXT, VARCHAR(n), VARCHAR 모두 동일한 방식(TOAST) 으로 처리
-    심지어 PostgreSQL에서는 VARCHAR(n)도 내부적으로 TEXT + CHECK(length <= n)으로 처리합니다
+    심지어 PostgreSQL에서는 VARCHAR(n)도 내부적으로 TEXT + CHECK(length <= n)으로 처리
     
     3. 더 간결한 스키마 설계
-    TEXT는 길이 제한이 없어서 유연하게 사용할 수 있고, 추후 변경이 필요 없습니다.
+    TEXT는 길이 제한이 없어서 유연하게 사용할 수 있고, 추후 변경이 필요 없움
     스키마를 간단하게 유지할 수 있음
 
 # ClickHouse 테이블 생성
@@ -210,7 +213,7 @@ def produce_message(value: str):
 
 # 내구내적(내가 직접 구축해서 직접 적용해봄) ClickHouse의 단점
 
-초당 대량의 데이터를 실시간으로 넣으면 내부에서 쓰기 병합(Merge) 지연 발생 가능, 삽입 속도가 좀 느림
+매초 데이터를 실시간으로 넣으면 내부에서 쓰기 병합(Merge) 지연 발생 가능, 삽입 속도가 좀 느림.
 
 예: 초당 많은 데이터가 Kafka에서 들어오면 → 내부 병합이 쌓이고 → 대시보드에서 2 ~ 5초 이상 늦게 보일 수 있음
 
