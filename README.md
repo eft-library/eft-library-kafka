@@ -95,6 +95,6 @@ def produce_message(value: str):
 ```
 
 # 개발 History
-- 🛠️ [Kafka 환경 구축](https://github.com/eft-library/eft-library-history/main/kafka/kafka_system_development.md)
-- 🚀 [ClickHouse와 PostgreSQL 비교 및 테이블 설계](https://github.com/eft-library/eft-library-history/main/kafka/clickhouse_postgresql.md)
-- 📊 [대시보드 성능 테스트](https://github.com/eft-library/eft-library-history/main/kafka/dashboard.md)
+- 🛠️ [Kafka 환경 구축](https://github.com/eft-library/eft-library-history/blob/main/kafka/kafka_system_development.md)
+- 🚀 [ClickHouse와 PostgreSQL 비교 및 테이블 설계](https://github.com/eft-library/eft-library-history/blob/main/kafka/clickhouse_postgresql.md)
+- 📊 [대시보드 성능 테스트](https://github.com/eft-library/eft-library-history/blob/main/kafka/dashboard.md)
