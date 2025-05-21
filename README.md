@@ -21,7 +21,7 @@
 > PostgreSQL과 ClickHouse 두 저장소에 적재하는 이유는 성능 비교를 해보기 위함입니다.
 
 # 구조
-![architecture](https://github.com/user-attachments/assets/11fc955e-0516-4dd7-8863-92f4ebb249af)
+![architecture](https://github.com/user-attachments/assets/0aad4cb2-2a18-48e1-832c-436507af67fd)
 
 # 환경
 
