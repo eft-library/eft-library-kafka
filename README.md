@@ -3,7 +3,7 @@
 - [구조](#구조)
 - [ClickHouse](#clickhouse)
 - [ClickHouse VS PostgreSQL](#clickhouse-vs-postgresql)
-- [개발 서버 사양](#개발-서버-사양)
+- [환경](#환경)
 - [개발 내용](#개발-내용)
 - [PostgreSQL 테이블 생성](#postgresql-테이블-생성)
 - [ClickHouse 테이블 생성](#clickhouse-테이블-생성)
@@ -16,7 +16,7 @@
 
 # eft-library-kafka
 
-> 실시간 데이터를 처리하는 부분입니다.
+> EFT Library의 실시간 데이터를 처리하는 부분입니다.
 > 
 > FastAPI의 Middleware를 사용해서 요청이 오는 경우 페이지 주소, 통신 방식, 요청 시간을 Kafka에 넘겨줍니다.
 > 
@@ -30,7 +30,7 @@
 # ClickHouse 
 ClickHouse는 Yandex에서 개발한 **오픈소스 컬럼 지향(column-oriented) 데이터베이스 관리 시스템(DBMS)** 입니다.
 
-OLAP(Online Analytical Processing) 용도로 설계되어, 대용량 데이터의 빠른 집계 및 분석에 특화되어 있습니다.
+**OLAP(Online Analytical Processing) 용도로 설계**되어, 대용량 데이터의 빠른 집계 및 분석에 특화되어 있습니다.
 - 데이터는 컬럼 단위로 저장됨
 - 실시간 분석 쿼리 성능에 강점
 - 분산 처리 및 병렬 쿼리에 최적화
@@ -65,8 +65,9 @@ Kafka를 통해서 페이지 방문 History 관련 대시보드와 통계를 표
 
 
 
-# 개발 서버 사양
-자원이 한정적이어서 하나의 서버에 동시에 구축 했습니다.
+# 환경
+
+**자원이 한정적이어서 하나의 서버에 Stand-alone으로 동시에 구축했습니다.**
 
 | 항목         | 정보                                        |
 |------------|-------------------------------------------|
@@ -77,13 +78,13 @@ Kafka를 통해서 페이지 방문 History 관련 대시보드와 통계를 표
 
 # 개발 내용
 
-FastAPI 애플리케이션에 Middleware를 적용하여 Kafka와 연동하였습니다.
+FastAPI 애플리케이션에 **Middleware를 적용하여 Kafka와 연동**하였습니다.
 
-Middleware에서는 사용자 요청에 대해 접속한 페이지 주소, 방문 시간, 요청 타입 등의 정보를 Kafka로 전송(Produce)합니다.
+Middleware에서는 사용자 요청에 대해 **접속한 페이지 주소, 방문 시간, 요청 타입 등의 정보를 Kafka로 전송(Produce)**합니다.
 
 이후 Kafka Consumer를 통해 해당 데이터를 PostgreSQL과 ClickHouse에 동시에 적재한 뒤,
 
-이 데이터를 기반으로 통계 쿼리를 수행하여 두 데이터베이스 간 성능을 비교하고자 합니다.
+이 데이터를 기반으로 통계 쿼리를 수행하여 **두 데이터베이스 간 성능을 비교**하고자 합니다.
 
     1. 시스템 구성
     FastAPI에 Middleware를 구현하여 Kafka 연동, 사용자 요청 시 아래의 정보를 Kafka에 Produce
@@ -210,17 +211,15 @@ def produce_message(value: str):
 
 # 내구내적(내가 직접 구축해서 직접 적용해봄) ClickHouse의 단점
 
-매초 데이터를 실시간으로 넣으면 내부에서 쓰기 병합(Merge) 지연 발생 가능, 삽입 속도가 좀 느림.
+매초 데이터를 실시간으로 넣으면 내부에서 쓰기 병합(Merge) 지연 발생 가능, **삽입 속도가 좀 느림.**
 
 예: 초당 많은 데이터가 Kafka에서 들어오면 → 내부 병합이 쌓이고 → 대시보드에서 2 ~ 5초 이상 늦게 보일 수 있음
 
 
 # 번외: 서버에 구축하기
-PostgreSQL은 이미 설치되어 있다는 가정
+PostgreSQL은 이미 설치되어 있어야 하고, Kafka와 ClickHouse를 구축하고, 연동하는 과정 입니다.
 
-Kafka와 ClickHouse를 구축하고, 연동하는 과정
-
-Stand-alone으로 구성, 자원이 없습니다;;;
+**Stand-alone으로 구성**, 자원이 없습니다;;;
 
 구축하기에 앞서 **Ubuntu 커널 매개변수를 활성화 하는 이유**
 
@@ -305,7 +304,7 @@ GRANT SELECT, INSERT, CREATE, UPDATE, DELETE, TRUNCATE, DROP ON prd.* TO test;
 
 # 번외: Kafka 코드
 
-초창기 버전입니다. 
+초창기에 작성하여 적용한 버전입니다.
 
 **config.py**
 ```python
