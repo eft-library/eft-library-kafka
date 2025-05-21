@@ -1,15 +1,9 @@
 
 - [eft-library-kafka](#eft-library-kafka)
 - [구조](#구조)
-- [ClickHouse](#clickhouse)
-- [ClickHouse VS PostgreSQL](#clickhouse-vs-postgresql)
 - [환경](#환경)
 - [개발 내용](#개발-내용)
-- [PostgreSQL 테이블 생성](#postgresql-테이블-생성)
-- [ClickHouse 테이블 생성](#clickhouse-테이블-생성)
 - [FastAPI의 Middleware 설정 및 Kafka Producer 서비스 구현](#fastapi의-middleware-설정-및-kafka-producer-서비스-구현)
-- [테스트 결과 및 성능 비교 (1만, 10만, 100만)](#테스트-결과-및-성능-비교-1만-10만-100만)
-- [내구내적(내가 직접 구축해서 직접 적용해봄) ClickHouse의 단점](#내구내적내가-직접-구축해서-직접-적용해봄-clickhouse의-단점)
 - [개발 History](#개발-history)
 
 
