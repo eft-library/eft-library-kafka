@@ -32,7 +32,7 @@ def get_clickhouse_client():
     return clickhouse_connect.get_client(**CH_CONFIG)
 
 
-def save_to_clickhouse(client, data):
+def save_log_to_clickhouse(client, data):
     query = """
     INSERT INTO prd.user_footprint (link, request, footprint_time)
     VALUES (%(link)s, %(request)s, %(footprint_time)s)

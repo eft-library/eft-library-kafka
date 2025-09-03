@@ -24,9 +24,17 @@ CH_CONFIG = {
 }
 
 # Kafka
-KAFKA_CONFIG = {
+LOG_KAFKA_CONFIG = {
     "bootstrap.servers": os.getenv("BOOTSTRAP_SERVER"),
     "group.id": os.getenv("GROUP_ID"),
     "auto.offset.reset": os.getenv("OFFSET_RESET_CONFIG"),
-    "topic": os.getenv("TOPIC"),
+    "topic": os.getenv("LOG_TOPIC"),
+}
+
+# Kafka
+NOTIFICATION_KAFKA_CONFIG = {
+    "bootstrap.servers": os.getenv("BOOTSTRAP_SERVER"),
+    "group.id": os.getenv("GROUP_ID"),
+    "auto.offset.reset": os.getenv("OFFSET_RESET_CONFIG"),
+    "topic": os.getenv("NOTIFICATION_TOPIC"),
 }

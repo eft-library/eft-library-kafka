@@ -1,26 +1,19 @@
 import json
 from confluent_kafka import Consumer, KafkaError
 from consumer.logger import logger
-from consumer.config import KAFKA_CONFIG
-from consumer.pg_client import get_pg_connection, save_to_postgresql
-from consumer.ch_client import get_clickhouse_client, save_to_clickhouse
 
 
-def main():
+def run_consumer(kafka_config, process_message_callback):
     consumer = Consumer(
         {
-            "bootstrap.servers": KAFKA_CONFIG["bootstrap.servers"],
-            "group.id": KAFKA_CONFIG["group.id"],
-            "auto.offset.reset": KAFKA_CONFIG["auto.offset.reset"],
+            "bootstrap.servers": kafka_config["bootstrap.servers"],
+            "group.id": kafka_config["group.id"],
+            "auto.offset.reset": kafka_config["auto.offset.reset"],
         }
     )
-    topic = KAFKA_CONFIG["topic"]
+    topic = kafka_config["topic"]
     consumer.subscribe([topic])
     logger.info(f"Subscribed to topic: {topic}")
-
-    pg_conn = get_pg_connection()
-    ch_client = get_clickhouse_client()
-    logger.info("DB 연결 성공")
 
     try:
         while True:
@@ -40,22 +33,15 @@ def main():
                 data = json.loads(msg.value().decode("utf-8"))
                 logger.info(f"Received message JSON: {data}")
 
-                save_to_postgresql(pg_conn, data)
-                save_to_clickhouse(ch_client, data)
+                process_message_callback(data)
 
             except json.JSONDecodeError as e:
                 logger.error(f"JSON 디코딩 실패: {e}")
             except Exception as e:
-                logger.error(f"DB 저장 실패: {e}")
+                logger.error(f"메시지 처리 실패: {e}")
 
     except KeyboardInterrupt:
         logger.info("Consumer 종료됨")
-
     finally:
         consumer.close()
-        pg_conn.close()
-        logger.info("Consumer 및 PostgreSQL 연결 종료")
-
-
-if __name__ == "__main__":
-    main()
+        logger.info("Consumer 연결 종료")
