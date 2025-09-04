@@ -1,3 +1,4 @@
+import json
 from consumer.pg_client import get_pg_connection
 from consumer.logger import logger
 
@@ -11,27 +12,30 @@ def process_notification_message(data):
     {
         "url": "123-hello-world",
         "title": "새 글입니다",
-        "author_email": "writer@test.com"
+        "author_email": "writer@test.com",
+        "noti_type": "create_post",
     }
     """
     try:
-        # DB 저장
-        # follow 한 사람들을 먼저 찾고 저장해야 함
         with pg_conn.cursor() as cur:
+            insert_query = """
+                INSERT INTO user_notifications (user_email, noti_type, payload)
+                SELECT uf.following_email, %(noti_type)s, %(payload)s
+                FROM user_follows uf
+                WHERE uf.follower_email = %(author_email)s
+            """
             cur.execute(
-                """
-                insert into user_notifications (user_email, noti_type, payload)
-                values ()
-                """,
-                (data["title"], data["url"], data["author_email"]),
+                insert_query,
+                {
+                    "noti_type": data["noti_type"],
+                    "payload": json.dumps(data),
+                    "author_email": data["author_email"],
+                },
             )
+
         pg_conn.commit()
-
-        # redis에 알림 보내기
-        # fastapi websocket이 redis를 subscribe 하고, 온 게 있으면 바로 발송
-        # 데이터는 게시글, 알림 대상 사용자 같이 보내기
-
-        logger.info(f"알림 처리 완료: {data}")
+        logger.info(f"알림 처리 완료 (DB 한방): {data}")
 
     except Exception as e:
         logger.error(f"알림 처리 실패: {e}")
+        pg_conn.rollback()
