@@ -2,53 +2,72 @@
 
 APP_DIR="/home/kafka/eft-library-kafka"
 VENV_DIR="$APP_DIR/venv"
-APP_NAME="main.py"
-PID_FILE="$APP_DIR/consumer.pid"
 
+SERVICES=("log" "notification")
 LOG_DIR="$APP_DIR/logs"
-LOG_FILE="$LOG_DIR/consumer.log"
-
 mkdir -p "$LOG_DIR"
 
-start() {
+start_service() {
+  SERVICE=$1
+  MAIN_FILE="$APP_DIR/main_${SERVICE}_consumer.py"
+  PID_FILE="$APP_DIR/${SERVICE}.pid"
+  LOG_FILE="$LOG_DIR/${SERVICE}.log"
+
   if [ -f "$PID_FILE" ] && kill -0 $(cat "$PID_FILE") 2>/dev/null; then
-    echo "Consumer is already running (PID: $(cat $PID_FILE))"
-    exit 1
+    echo "$SERVICE consumer is already running (PID: $(cat $PID_FILE))"
+    return
   fi
-  echo "Starting consumer..."
+
+  echo "Starting $SERVICE consumer..."
   source "$VENV_DIR/bin/activate"
-  nohup python3 "$APP_DIR/$APP_NAME" > "$LOG_FILE" 2>&1 &
+  nohup python3 "$MAIN_FILE" > "$LOG_FILE" 2>&1 &
   echo $! > "$PID_FILE"
   deactivate
-  echo "Consumer started with PID $(cat $PID_FILE)"
+  echo "$SERVICE consumer started with PID $(cat $PID_FILE)"
 }
 
-stop() {
+stop_service() {
+  SERVICE=$1
+  PID_FILE="$APP_DIR/${SERVICE}.pid"
+
   if [ ! -f "$PID_FILE" ]; then
-    echo "Consumer is not running (no PID file)"
-    exit 1
+    echo "$SERVICE consumer is not running (no PID file)"
+    return
   fi
+
   PID=$(cat "$PID_FILE")
   if kill -0 $PID 2>/dev/null; then
-    echo "Stopping consumer (PID: $PID)..."
+    echo "Stopping $SERVICE consumer (PID: $PID)..."
     kill $PID
     rm -f "$PID_FILE"
-    echo "Consumer stopped."
+    echo "$SERVICE consumer stopped."
   else
     echo "Process not running but PID file exists. Cleaning up."
     rm -f "$PID_FILE"
   fi
 }
 
-restart() {
-  stop
-  sleep 1
-  start
-}
-
 case "$1" in
-  start) start ;;
-  stop) stop ;;
-  restart) restart ;;
-  *) echo "Usage: $0 {start|stop|restart}" ;;
+  start)
+    for svc in "${SERVICES[@]}"; do
+      start_service "$svc"
+    done
+    ;;
+  stop)
+    for svc in "${SERVICES[@]}"; do
+      stop_service "$svc"
+    done
+    ;;
+  restart)
+    for svc in "${SERVICES[@]}"; do
+      stop_service "$svc"
+    done
+    sleep 1
+    for svc in "${SERVICES[@]}"; do
+      start_service "$svc"
+    done
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart}"
+    ;;
 esac
