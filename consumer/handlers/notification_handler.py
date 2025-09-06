@@ -18,6 +18,64 @@ redis_client = redis.StrictRedis(
 )
 logger.info("Redis 연결 성공")
 
+NOTIFICATION_HANDLERS = {
+    "create_post": {
+        "query": """
+            INSERT INTO user_notifications (user_email, noti_type, payload)
+            SELECT uf.following_email, %(noti_type)s, %(payload)s
+            FROM user_follows uf
+            WHERE uf.follower_email = %(author_email)s
+            RETURNING user_email
+        """,
+        "param_builder": lambda data: {
+            "noti_type": data["noti_type"],
+            "payload": json.dumps(data),
+            "author_email": data["author_email"],
+        },
+    },
+    "create_parent_comment": {
+        "query": """
+            INSERT INTO user_notifications (user_email, noti_type, payload)
+            SELECT cp.user_email, %(noti_type)s, %(payload)s
+            FROM community_posts cp
+            WHERE cp.id = %(post_id)s
+            RETURNING user_email
+        """,
+        "param_builder": lambda data: {
+            "noti_type": data["noti_type"],
+            "payload": json.dumps(data),
+            "post_id": data["post_id"],
+        },
+    },
+    "create_child_comment": {
+        "query": """
+            INSERT INTO user_notifications (user_email, noti_type, payload)
+            SELECT cc.user_email, %(noti_type)s, %(payload)s
+            FROM community_comments cc
+            WHERE cc.id = %(parent_comment_id)s
+            RETURNING user_email
+        """,
+        "param_builder": lambda data: {
+            "noti_type": data["noti_type"],
+            "payload": json.dumps(data),
+            "parent_comment_id": data["parent_comment_id"],
+        },
+    },
+    "follow_user": {
+        "query": """
+            INSERT INTO user_notifications (user_email, noti_type, payload)
+            SELECT ui.email, %(noti_type)s, %(payload)s
+            FROM user_info ui
+            WHERE ui.email = %(follower_email)s
+            RETURNING user_email
+        """,
+        "param_builder": lambda data: {
+            "noti_type": data["noti_type"],
+            "payload": json.dumps(data),
+            "follower_email": data["follower_email"],
+        },
+    },
+}
 
 def save_notifications_and_push_to_redis(cur, query, params, data):
     """
@@ -39,57 +97,17 @@ def process_notification_message(data):
     """
     알림 처리하기
     """
+    handler = NOTIFICATION_HANDLERS.get(data["noti_type"])
+    if not handler:
+        logger.warning(f"지원하지 않는 알림 타입: {data['noti_type']}")
+        return
+
     try:
         with pg_conn.cursor() as cur:
-            if data["noti_type"] == "create_post":
-                # 팔로우한 사용자에게 알림
-                insert_query = """
-                    INSERT INTO user_notifications (user_email, noti_type, payload)
-                    SELECT uf.following_email, %(noti_type)s, %(payload)s
-                    FROM user_follows uf
-                    WHERE uf.follower_email = %(author_email)s
-                    RETURNING user_email
-                """
-                params = {
-                    "noti_type": data["noti_type"],
-                    "payload": json.dumps(data),
-                    "author_email": data["author_email"],
-                }
-                save_notifications_and_push_to_redis(cur, insert_query, params, data)
-
-            elif data["noti_type"] == "create_parent_comment":
-                # 게시글 작성자에게 알림
-                insert_query = """
-                    INSERT INTO user_notifications (user_email, noti_type, payload)
-                    SELECT cp.user_email, %(noti_type)s, %(payload)s
-                    FROM community_posts cp
-                    WHERE cp.id = %(post_id)s
-                    RETURNING user_email
-                """
-                params = {
-                    "noti_type": data["noti_type"],
-                    "payload": json.dumps(data),
-                    "post_id": data["post_id"],
-                }
-                save_notifications_and_push_to_redis(cur, insert_query, params, data)
-            elif data["noti_type"] == "create_child_comment":
-                # 부모 댓글에 알림
-                insert_query = """
-                    INSERT INTO user_notifications (user_email, noti_type, payload)
-                    SELECT cc.user_email, %(noti_type)s, %(payload)s
-                    FROM community_comments cc
-                    WHERE cc.id = %(parent_comment_id)s
-                    RETURNING user_email
-                """
-                params = {
-                    "noti_type": data["noti_type"],
-                    "payload": json.dumps(data),
-                    "parent_comment_id": data["parent_comment_id"],
-                }
-                save_notifications_and_push_to_redis(cur, insert_query, params, data)
-
+            insert_query = handler["query"]
+            params = handler["param_builder"](data)
+            save_notifications_and_push_to_redis(cur, insert_query, params, data)
         logger.info(f"알림 처리 완료: {data} (Redis Save)")
-
     except Exception as e:
         logger.error(f"알림 처리 실패: {e}")
         pg_conn.rollback()
