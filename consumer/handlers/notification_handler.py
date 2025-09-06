@@ -76,7 +76,7 @@ def process_notification_message(data):
                 # 부모 댓글에 알림
                 insert_query = """
                     INSERT INTO user_notifications (user_email, noti_type, payload)
-                    SELECT cp.user_email, %(noti_type)s, %(payload)s
+                    SELECT cc.user_email, %(noti_type)s, %(payload)s
                     FROM community_comments cc
                     WHERE cc.id = %(parent_comment_id)s
                     RETURNING user_email
