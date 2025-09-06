@@ -72,6 +72,21 @@ def process_notification_message(data):
                     "post_id": data["post_id"],
                 }
                 save_notifications_and_push_to_redis(cur, insert_query, params, data)
+            elif data["noti_type"] == "create_child_comment":
+                # 부모 댓글에 알림
+                insert_query = """
+                    INSERT INTO user_notifications (user_email, noti_type, payload)
+                    SELECT cp.user_email, %(noti_type)s, %(payload)s
+                    FROM community_comments cc
+                    WHERE cc.id = %(parent_comment_id)s
+                    RETURNING user_email
+                """
+                params = {
+                    "noti_type": data["noti_type"],
+                    "payload": json.dumps(data),
+                    "parent_comment_id": data["parent_comment_id"],
+                }
+                save_notifications_and_push_to_redis(cur, insert_query, params, data)
 
         logger.info(f"알림 처리 완료: {data} (Redis Save)")
 
