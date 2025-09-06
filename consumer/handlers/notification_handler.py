@@ -75,6 +75,18 @@ NOTIFICATION_HANDLERS = {
             "follower_email": data["follower_email"],
         },
     },
+    "penalty_user": {
+        "query": """
+            INSERT INTO user_notifications (user_email, noti_type, payload)
+            VALUES (%(user_email)s, %(noti_type)s, %(payload)s)
+            RETURNING user_email
+        """,
+        "param_builder": lambda data: {
+            "user_email": data["user_email"],
+            "noti_type": data["noti_type"],
+            "payload": json.dumps(data),
+        },
+    },
 }
 
 def save_notifications_and_push_to_redis(cur, query, params, data):
