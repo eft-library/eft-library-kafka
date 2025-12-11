@@ -1,6 +1,6 @@
 #!/bin/bash
 
-KAFKA_DIR="/home/kafka/kafka_2.13-4.0.0"
+KAFKA_DIR="/home/kafka/kafka_2.13-4.1.1"
 CONFIG="$KAFKA_DIR/config/server.properties"
 PID_FILE="$KAFKA_DIR/kafka.pid"
 LOG_FILE="$KAFKA_DIR/kafka.log"
