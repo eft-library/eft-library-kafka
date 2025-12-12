@@ -97,3 +97,8 @@ def produce_message(value: str):
 # 개발 History
 - 🛠️ [Kafka 환경 구축](https://github.com/eft-library/eft-library-history/blob/main/kafka/kafka_system_development.md)
 - 🚀 [ClickHouse와 PostgreSQL 비교 및 테이블 설계](https://github.com/eft-library/eft-library-history/blob/main/kafka/clickhouse_postgresql.md)
+
+<!--
+pip install --upgrade pip
+pip install redis psycopg2-binary python-dotenv clickhouse-connect confluent-kafka
+-->
