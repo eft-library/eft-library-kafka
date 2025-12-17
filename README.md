@@ -16,7 +16,8 @@ PostgreSQL과 ClickHouse 두 저장소에 적재하는 이유는 성능 비교�
 Redis를 사용하여 WebSocket에 사용자 알림 데이터를 연결하고 있습니다.
 
 # 구조
-<img width="1923" height="1366" alt="arc" src="https://github.com/user-attachments/assets/ee949526-d6ce-4f69-bf64-6c350097a593" />
+
+<img width="1923" height="1366" alt="last" src="https://github.com/user-attachments/assets/3a17adc2-e80b-4042-93fa-dda30bbaf947" />
 
 # 환경
 
