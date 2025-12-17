@@ -9,10 +9,11 @@
 
 # eft-library-kafka
 
-> EFT Library의 실시간 데이터를 처리하는 부분입니다.     
-> FastAPI의 Middleware를 사용해서 요청이 오는 경우 페이지 주소, 통신 방식, 요청 시간을 Kafka에 넘겨줍니다.       
-> Kafka에서 이를 받아 Postgresql, ClickHouse에 적재를 진행하고, 웹에서 통계를 보여주고 있습니다.    
-> PostgreSQL과 ClickHouse 두 저장소에 적재하는 이유는 성능 비교를 해보기 위함입니다.
+EFT Library의 실시간 데이터를 처리하는 부분입니다.        
+FastAPI의 Middleware를 사용해서 요청이 오는 경우 페이지 주소, 통신 방식, 요청 시간을 Kafka에 넘겨줍니다.          
+Kafka에서 이를 받아 Postgresql, ClickHouse에 적재를 진행하고, 웹에서 통계를 보여주고 있습니다.      
+PostgreSQL과 ClickHouse 두 저장소에 적재하는 이유는 성능 비교를 해보기 위함입니다.   
+Redis를 사용하여 WebSocket에 사용자 알림 데이터를 연결하고 있습니다.
 
 # 구조
 ![architecture](https://github.com/user-attachments/assets/0aad4cb2-2a18-48e1-832c-436507af67fd)
@@ -21,11 +22,12 @@
 
 **자원이 한정적이어서 하나의 서버에 Stand-alone으로 동시에 구축했습니다.**
 
-| 항목         | 정보                                        |
-|------------|-------------------------------------------|
-| Kafka      | kafka_2.13-4.0.0 (KRaft 모드, Zookeeper 제거) |
-| PostgreSQL | PostgreSQL 17.4                           |
-| ClickHouse | 25.4.4.25                                 |
+| 항목         | 정보               |
+|------------|------------------|
+| Kafka      | kafka_2.13-4.1.1 |
+| PostgreSQL | PostgreSQL 17.7  |
+| ClickHouse | 25.11.2.24       |
+| Redis      | remi-8.4         |
 
 
 # 개발 내용
@@ -52,51 +54,9 @@ Middleware에서는 사용자 요청에 대해 **접속한 페이지 주소, 방
     3. 분석 및 실험 목적
     동일한 데이터셋에 대해 통계 쿼리를 수행, PostgreSQL과 ClickHouse의 집계 쿼리 처리 성능을 비교 분석
 
-# FastAPI의 Middleware 설정 및 Kafka Producer 서비스 구현
-
-**main.py**
-
-```python
-@app.middleware("http")
-async def kafka_producer_middleware(request: Request, call_next):
-    now_kst = datetime.now(ZoneInfo("Asia/Seoul"))
-    footprint_time = now_kst.isoformat()
-    data = {
-        "method": request.method,
-        "link": request.url.path,
-        "footprint_time": footprint_time,
-    }
-    json_str = json.dumps(data)
-    produce_message(json_str)
-    response = await call_next(request)
-    return response
-```
-
-**kafka_producer.py**
-
-```python
-BOOTSTRAP_SERVER = os.getenv("BOOTSTRAP_SERVER")
-TOPIC = os.getenv("TOPIC")
-
-producer_conf = {"bootstrap.servers": BOOTSTRAP_SERVER, "client.id": "fastapi-producer"}
-producer = Producer(producer_conf)
-
-
-def delivery_report(err, msg):
-    if err:
-        logging.error(f"Delivery failed: {err}")
-    else:
-        logging.info(f"Delivered message to {msg.topic()} [{msg.partition()}]")
-
-
-def produce_message(value: str):
-    producer.produce(TOPIC, value=value.encode("utf-8"), callback=delivery_report)
-    producer.poll(0)
-```
-
 # 개발 History
-- 🛠️ [Kafka 환경 구축](https://github.com/eft-library/eft-library-history/blob/main/kafka/kafka_system_development.md)
-- 🚀 [ClickHouse와 PostgreSQL 비교 및 테이블 설계](https://github.com/eft-library/eft-library-history/blob/main/kafka/clickhouse_postgresql.md)
+- [Kafka 환경 구축](https://github.com/eft-library/eft-library-history/blob/main/kafka/kafka_system_development.md)
+- [사용자 방문 통계](https://github.com/eft-library/eft-library-history/blob/main/kafka/user_footprint.md)
 
 <!--
 pip install --upgrade pip
