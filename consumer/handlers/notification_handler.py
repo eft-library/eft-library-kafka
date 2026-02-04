@@ -102,7 +102,7 @@ def save_notifications_and_push_to_redis(cur, query, params, data):
         redis_key = f"notifications:{user_email}"
         redis_client.lpush(redis_key, json.dumps(data))
         redis_client.expire(redis_key, 60 * 60 * 24 * 7)  # TTL 7일
-        # ✅ WebSocket용 pub/sub push
+        # WebSocket용 pub/sub push
         redis_client.publish(f"notifications_channel:{user_email}", json.dumps(data))
 
     return notified_users

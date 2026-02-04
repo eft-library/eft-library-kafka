@@ -15,14 +15,6 @@ PG_CONFIG = {
     "password": os.getenv("DB_PASSWORD"),
 }
 
-# ClickHouse
-CH_CONFIG = {
-    "host": os.getenv("CH_HOST", "localhost"),
-    "port": int(os.getenv("CH_PORT", "8123")),
-    "username": os.getenv("CH_USER", "default"),
-    "password": os.getenv("CH_PASSWORD", ""),
-}
-
 # Kafka
 LOG_KAFKA_CONFIG = {
     "bootstrap.servers": os.getenv("BOOTSTRAP_SERVER"),
