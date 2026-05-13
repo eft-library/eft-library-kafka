@@ -10,7 +10,7 @@ def get_pg_connection():
 def save_log_to_postgresql(conn, data):
     with conn.cursor() as cur:
         insert_query = """
-        INSERT INTO user_footprint (request, link, footprint_time)
+        INSERT INTO user_footprint (request_type, url, request_time)
         VALUES (%s, %s, %s)
         """
         cur.execute(

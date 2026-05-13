@@ -21,11 +21,11 @@ logger.info("Redis 연결 성공")
 NOTIFICATION_HANDLERS = {
     "create_post": {
         "query": """
-            INSERT INTO user_notifications (user_email, noti_type, payload)
+            INSERT INTO user_notifications (email, noti_type, payload)
             SELECT uf.following_email, %(noti_type)s, %(payload)s
             FROM user_follows uf
             WHERE uf.follower_email = %(author_email)s
-            RETURNING user_email
+            RETURNING email
         """,
         "param_builder": lambda data: {
             "noti_type": data["noti_type"],
@@ -35,11 +35,11 @@ NOTIFICATION_HANDLERS = {
     },
     "create_parent_comment": {
         "query": """
-            INSERT INTO user_notifications (user_email, noti_type, payload)
+            INSERT INTO user_notifications (email, noti_type, payload)
             SELECT cp.user_email, %(noti_type)s, %(payload)s
             FROM community_posts cp
             WHERE cp.id = %(post_id)s
-            RETURNING user_email
+            RETURNING email
         """,
         "param_builder": lambda data: {
             "noti_type": data["noti_type"],
@@ -49,11 +49,11 @@ NOTIFICATION_HANDLERS = {
     },
     "create_child_comment": {
         "query": """
-            INSERT INTO user_notifications (user_email, noti_type, payload)
+            INSERT INTO user_notifications (email, noti_type, payload)
             SELECT cc.user_email, %(noti_type)s, %(payload)s
             FROM community_comments cc
             WHERE cc.id = %(parent_comment_id)s
-            RETURNING user_email
+            RETURNING email
         """,
         "param_builder": lambda data: {
             "noti_type": data["noti_type"],
@@ -63,11 +63,11 @@ NOTIFICATION_HANDLERS = {
     },
     "follow_user": {
         "query": """
-            INSERT INTO user_notifications (user_email, noti_type, payload)
+            INSERT INTO user_notifications (email, noti_type, payload)
             SELECT ui.email, %(noti_type)s, %(payload)s
             FROM user_info ui
             WHERE ui.email = %(follower_email)s
-            RETURNING user_email
+            RETURNING email
         """,
         "param_builder": lambda data: {
             "noti_type": data["noti_type"],
@@ -77,9 +77,9 @@ NOTIFICATION_HANDLERS = {
     },
     "penalty_user": {
         "query": """
-            INSERT INTO user_notifications (user_email, noti_type, payload)
+            INSERT INTO user_notifications (email, noti_type, payload)
             VALUES (%(user_email)s, %(noti_type)s, %(payload)s)
-            RETURNING user_email
+            RETURNING email
         """,
         "param_builder": lambda data: {
             "user_email": data["user_email"],
