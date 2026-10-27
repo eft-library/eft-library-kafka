@@ -8,7 +8,7 @@
 
 ## 전체 서비스에서 맡은 역할
 
-<img width="1141" height="955" alt="타르코프 도서관 전체 서비스 구성도" src="https://github.com/user-attachments/assets/e7ed7864-3732-4825-b836-5b6cf2f5ed55" />
+<img width="1170" height="960" alt="261027_arch" src="https://github.com/user-attachments/assets/49d7ab62-f53b-4898-b4fc-8c180b9b3689" />
 
 Airflow는 게임 데이터 수집·정기 갱신과 화면용 JSON 생성을, FastAPI는 API와 실시간 연결을, Next.js·React는 웹 화면을 담당합니다. 이 저장소는 백엔드에서 발생한 접근 기록과 커뮤니티 알림을 비동기로 처리합니다.
 
