@@ -8,7 +8,7 @@
 
 ## 전체 서비스에서 맡은 역할
 
-<img width="1351" height="1167" alt="261029_detail_arch" src="https://github.com/user-attachments/assets/14993361-38d8-4a79-9d8b-15eba8ed009e" />
+<img width="1344" height="1178" alt="261029_detail_arch" src="https://github.com/user-attachments/assets/b995e80f-8827-49a1-9d35-13d3db581014" />
 
 Airflow는 게임 데이터 수집·정기 갱신과 화면용 JSON 생성을, FastAPI는 API와 실시간 연결을, Next.js·React는 웹 화면을 담당합니다. 이 저장소는 백엔드에서 발생한 접근 기록과 커뮤니티 알림을 비동기로 처리합니다.
 
